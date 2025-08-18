@@ -99,9 +99,9 @@ Chrome/115.0.0.0 Safari/537.36";
     page.execute(SetDiscoverTargetsParams::builder().discover(true).build()?)
         .await?;
 
-    for i in 1..=5 {
+    for i in 1..=100 {
         let tag = format!("[task#{i}]");
-        println!();
+        println!("\n");
         log!("{tag} START TASK...");
         if let Err(err) = start_task(&browser, &page).await {
             log!("{tag} TASK FAILED: {err:?}");

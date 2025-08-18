@@ -36,7 +36,8 @@ pub async fn wait_for_popup_page(browser: &Browser) -> Result<Page, TuError> {
     let mut popup_page = None;
     while popup_page.is_none() {
         for page in browser.pages().await? {
-            if let Ok(Some(url)) = page.url().await {println!();
+            if let Ok(Some(url)) = page.url().await {
+                println!("\n");
                 log!("{url}");
                 if url.contains("youtube.com") {
                     popup_page.replace(page);
@@ -181,9 +182,6 @@ pub async fn start_task(browser: &Browser, page: &Page) -> Result<(), TuError> {
     Ok(())
 }
 
-
-pub async fn page_url(page: &Page) -> String{
-    page.url()
-    .await.unwrap()
-    .unwrap()
+pub async fn page_url(page: &Page) -> String {
+    page.url().await.unwrap().unwrap()
 }
