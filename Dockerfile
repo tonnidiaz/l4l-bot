@@ -34,4 +34,5 @@ libxtst6
 
 WORKDIR /app
 COPY --from=builder /app/target/release/l4l /app/l4l
+COPY --from=builder /app/data/ /app/data
 CMD ["/app/l4l"]
