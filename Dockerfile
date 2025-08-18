@@ -8,7 +8,29 @@ RUN cargo build --release
 # Final run stage
 FROM debian:bookworm-slim AS runner
 
-RUN apt-get update -y && apt-get install -y libssl3 ca-certificates libglib2.0-0 libnss3-dev libxss1 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 libxrandr2 libxdamage1 libpango-1.0-0 libnss3 libxshmfence1 libgbm1 libxfixes3
+RUN apt-get update -y && apt-get install -y libssl3 ca-certificates
+RUN sudo apt install -y \
+libnss3 \
+libdbus-1-3 \
+libatk1.0-0 \
+libasound2 \
+libxrandr2 \
+libxkbcommon-x11-0 \
+libxfixes3 \
+libxcomposite1 \
+libxdamage1 \
+libgbm1 \
+libcups2 \
+libcairo2 \
+libpango-1.0-0 \
+libatk-bridge2.0-0 \
+libx11-6 \
+libx11-xcb1 \
+libxext6 \
+libxi6 \
+libxrender1 \
+libxss1 \
+libxtst6
 
 WORKDIR /app
 COPY --from=builder /app/target/release/l4l /app/l4l
