@@ -77,6 +77,8 @@ pub async fn login_to_yt(page: &Page) -> Result<(), TuError> {
             if done {
                 break;
             }
+            log!("{:?}", page.content().await);
+            sleep(1000).await;
         }
         let input = input.unwrap();
         log!("Typing pwd...");
