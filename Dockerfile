@@ -9,7 +9,7 @@ RUN cargo build --release
 FROM debian:bookworm-slim AS runner
 
 RUN apt-get update -y && apt-get install -y libssl3 ca-certificates
-RUN sudo apt install -y \
+RUN apt-get install -y \
 libnss3 \
 libdbus-1-3 \
 libatk1.0-0 \
