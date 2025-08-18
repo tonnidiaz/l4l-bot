@@ -66,18 +66,24 @@ Chrome/115.0.0.0 Safari/537.36";
     page.wait_for_navigation().await?;
 
     let url = page_url(&page).await;
-    if url.starts_with("https://consent.youtube"){
+    if url.starts_with("https://consent.youtube") {
         log!("FINDING ACCEPT BTN...");
-        find_click_btn(&page, r#"button[aria-label="Accept all"]"#, "accept all", None).await?;
+        find_click_btn(
+            &page,
+            r#"button[aria-label="Accept all"]"#,
+            "accept all",
+            None,
+        )
+        .await?;
         page.wait_for_navigation().await?;
     }
+    while !page_url(&page).await.starts_with("https://www.youtube.com") {
+        log!("{}", page_url(&page).await);
+        sleep(500).await;
+    }
 
-    
     let url = page_url(&page).await;
-    if !url
-        .starts_with("https://www.youtube.com")
-    {
-        log!("{}", url);
+    if !url.starts_with("https://www.youtube.com") {
         return Err("NOT LOGGED IN TO GOOGLE".into());
     }
 
