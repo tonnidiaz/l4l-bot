@@ -65,11 +65,16 @@ Chrome/115.0.0.0 Safari/537.36";
     page.set_user_agent(user_agent).await?;
     page.wait_for_navigation().await?;
 
-    let url = page
-    .url()
-    .await?
-    .unwrap();
+    let url = page_url(&page).await;
+    if url.starts_with("https://consent.youtube"){
+        log!("FINDING ACCEPT BTN...");
+        let accept_btn = page.find_xpath(r#"//*[@id="yDmH0d"]/c-wiz/div/div/div/div[2]/div[1]/div[3]/div[1]/form[2]/div/div/button"#).await?;
+        accept_btn.click().await?;
+        page.wait_for_navigation().await?;
+    }
 
+    
+    let url = page_url(&page).await;
     if !url
         .starts_with("https://www.youtube.com")
     {

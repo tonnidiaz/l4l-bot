@@ -178,3 +178,10 @@ pub async fn start_task(browser: &Browser, page: &Page) -> Result<(), TuError> {
 
     Ok(())
 }
+
+
+pub async fn page_url(page: &Page) -> String{
+    page.url()
+    .await.unwrap()
+    .unwrap()
+}
