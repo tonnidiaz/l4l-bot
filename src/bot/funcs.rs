@@ -5,10 +5,7 @@ use chromiumoxide::{
 use std::fs::{self};
 use tokio::time;
 
-use crate::{
-    funcs::sleep,
-    log, types::TuError,
-};
+use crate::{funcs::sleep, log, types::TuError};
 use chromiumoxide::cdp::browser_protocol::network::CookieParam;
 
 pub async fn find_click_btn(
@@ -65,7 +62,7 @@ pub async fn login_to_yt(page: &Page) -> Result<(), TuError> {
 
         log!("Find pwd input...");
         let mut input = None;
-        loop {
+        for i in 0..10 {
             let mut done = false;
             if let Ok(inp) = page.find_element(r#"input[type="password"]"#).await {
                 if inp.clickable_point().await.is_ok() {
@@ -77,10 +74,12 @@ pub async fn login_to_yt(page: &Page) -> Result<(), TuError> {
             if done {
                 break;
             }
-            log!("{:?}", page.content().await);
+            if i == 0 {
+                log!("{:?}", page.content().await);
+            }
             sleep(1000).await;
         }
-        let input = input.unwrap();
+        let input = input.ok_or("Failed to find pwd field.")?;
         log!("Typing pwd...");
         /* sleep(1000).await; */
         input.click().await?;
