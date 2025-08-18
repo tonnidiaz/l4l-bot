@@ -4,15 +4,14 @@ use self::funcs::*;
 use std::{collections::HashMap, time::Duration};
 
 use chromiumoxide::{
-    Browser, BrowserConfig, cdp::
-        browser_protocol::target::SetDiscoverTargetsParams
-    ,
+    Browser, BrowserConfig, cdp::browser_protocol::target::SetDiscoverTargetsParams,
 };
 use futures::StreamExt;
 
 use crate::{
     funcs::{dld_driver, sleep},
-    log, types::TuError,
+    log,
+    types::TuError,
 };
 
 pub async fn main() -> Result<(), TuError> {
@@ -46,6 +45,8 @@ Chrome/115.0.0.0 Safari/537.36";
             "--disable-extensions",
             "--start-maximized",
             "--window-size=1280,720",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
         ]);
 
     if false && is_dev {
