@@ -82,9 +82,12 @@ pub async fn login_to_yt(page: &Page) -> Result<(), TuError> {
         log!("Typing pwd...");
         /* sleep(1000).await; */
         input.click().await?;
+        log!("[clicked]");
         input.type_str(pwd).await?;
+        log!("SUBMITTING PWD...");
         input.press_key("Enter").await?;
 
+        log!("WAITING FOR NAV...");
         page.wait_for_navigation().await?;
         log!("URL: {:?}", page.url().await.unwrap());
         match page.url().await {
