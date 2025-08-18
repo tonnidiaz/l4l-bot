@@ -75,7 +75,7 @@ pub async fn login_to_yt(page: &Page) -> Result<(), TuError> {
                 break;
             }
             if i == 0 {
-                log!("{:?}", page.content().await);
+                log!("{}", page.content().await.unwrap());
             }
             sleep(1000).await;
         }
