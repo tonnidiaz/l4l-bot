@@ -1,14 +1,19 @@
-
 mod bot;
 mod funcs;
+mod server;
+mod types;
 
 #[tokio::main]
 async fn main() {
     log!("Hello, world!");
     dotenv::dotenv().ok();
-    if let Err(err) = bot::main().await{
-        log!("[bot_err] {err:?}");
-    }
+    tokio::spawn(async move {
+        if let Err(err) = bot::main().await {
+            log!("[bot_err] {err:?}");
+        }
+    });
+
+    let _ = server::main().await;
 }
 
 #[macro_export]

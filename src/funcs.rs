@@ -3,9 +3,9 @@ use std::path::Path;
 use chromiumoxide::{BrowserFetcher, BrowserFetcherOptions};
 use tokio::time;
 
-use crate::log;
+use crate::{log, types::TuError};
 
-pub async fn dld_driver() -> Result<String, Box<dyn std::error::Error>> {
+pub async fn dld_driver() -> Result<String, TuError> {
 
     log!("DOWNLOADING DRIVER...");
     let download_path = Path::new("./download");
