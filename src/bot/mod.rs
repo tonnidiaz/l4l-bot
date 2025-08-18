@@ -68,8 +68,7 @@ Chrome/115.0.0.0 Safari/537.36";
     let url = page_url(&page).await;
     if url.starts_with("https://consent.youtube"){
         log!("FINDING ACCEPT BTN...");
-        let accept_btn = page.find_xpath(r#"//*[@id="yDmH0d"]/c-wiz/div/div/div/div[2]/div[1]/div[3]/div[1]/form[2]/div/div/button"#).await?;
-        accept_btn.click().await?;
+        find_click_btn(&page, r#"button[aria-label="Accept all"]"#, "accept all", None).await?;
         page.wait_for_navigation().await?;
     }
 
