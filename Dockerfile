@@ -8,7 +8,7 @@ RUN cargo build --release
 # Final run stage
 FROM debian:bookworm-slim AS runner
 
-RUN apt-get update -y && apt-get install -y libssl3 ca-certificate
+RUN apt-get update -y && apt-get install -y libssl3 ca-certificates
 WORKDIR /app
 COPY --from=builder /app/target/release/l4l /app/l4l
 CMD ["/app/l4l"]
