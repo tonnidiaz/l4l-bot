@@ -65,12 +65,15 @@ Chrome/115.0.0.0 Safari/537.36";
     page.set_user_agent(user_agent).await?;
     page.wait_for_navigation().await?;
 
-    if !page
-        .url()
-        .await?
-        .unwrap()
+    let url = page
+    .url()
+    .await?
+    .unwrap();
+
+    if !url
         .starts_with("https://www.youtube.com")
     {
+        log!("{}", url);
         return Err("NOT LOGGED IN TO GOOGLE".into());
     }
 
