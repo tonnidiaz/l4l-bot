@@ -62,10 +62,14 @@ Chrome/115.0.0.0 Safari/537.36";
     add_cookes(&browser).await?;
 
     // check platform auth
+    if IS_FB{
     check_fb_auth(&browser).await?;
+    }else{check_yt_auth(&browser).await?;}
     if false {
         return Ok(());
     }
+    
+    log!("LOGGED IN!");
     // go to like4like page
     let url = if IS_FB {
         "https://www.like4like.org/user/earn-facebook-subscribes.php"
@@ -129,7 +133,7 @@ async fn check_yt_auth(browser: &Browser) -> Res<()> {
 async fn check_fb_auth(browser: &Browser) -> Res<()> {
     let page = browser.new_page("https://www.facebook.com").await?;
     page.wait_for_navigation().await?;
-    log!("ON FACEBOOK");
+    // log!("ON FACEBOOK");
     // check avatar
     page.find_element(r#"div[aria-label="Your profile"]"#)
         .await?;

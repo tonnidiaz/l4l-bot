@@ -23,7 +23,7 @@ pub async fn find_click_btn(
             ok = true;
             break;
         } else {
-            time::sleep(time::Duration::from_millis(1000)).await;
+            time::sleep(time::Duration::from_millis(1500)).await;
         }
     }
     if !ok{

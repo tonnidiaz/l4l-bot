@@ -3,7 +3,7 @@ FROM rust:bookworm AS builder
  
 WORKDIR /app
 COPY . .
-RUN cargo build --release
+RUN cargo build --release -j 10
  
 # Final run stage
 FROM debian:bookworm-slim AS runner
