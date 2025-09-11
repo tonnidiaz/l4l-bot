@@ -27,7 +27,7 @@ macro_rules! log {
         {
             let now = chrono::Local::now();
             let msg = format!($($arg),*);
-            println!("\n[{}] {}", now.format("%Y-%m-%d %H:%M:%S"), msg);
+            println!("[{}] {}", now.format("%Y-%m-%d %H:%M:%S"), msg);
         }
     }};
 }

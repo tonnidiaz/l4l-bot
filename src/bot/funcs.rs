@@ -125,6 +125,7 @@ pub async fn add_cookes(browser: &Browser) -> Result<(), TuError> {
                 let s = fs::read_to_string(entry.path()).expect("Failed to read cookie file");
                 let _cookies: Vec<CookieParam> =
                     serde_json::from_str(&s).expect("Failed to parse cookie");
+                log!("C: {:?}", _cookies[0].expires.as_ref().unwrap());
                 cookies.extend(_cookies);
             }
         }
