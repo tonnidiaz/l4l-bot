@@ -1,10 +1,10 @@
 [
   {
     "name": "_ga",
-    "value": "GA1.1.1601610327.1755424208",
+    "value": "GA1.1.1261736883.1757604070",
     "domain": ".like4like.org",
     "path": "/",
-    "expires": 1792137597.552433,
+    "expires": 1792166092.506929,
     "httpOnly": false,
     "secure": false
   },
@@ -19,10 +19,10 @@
   },
   {
     "name": "_ga_DVWFX221E1",
-    "value": "GS2.1.s1757577590$o8$g1$t1757577597$j53$l0$h0",
+    "value": "GS2.1.s1757604070$o1$g1$t1757606092$j59$l0$h0",
     "domain": ".like4like.org",
     "path": "/",
-    "expires": 1792137597.550729,
+    "expires": 1792166092.506187,
     "httpOnly": false,
     "secure": false
   }

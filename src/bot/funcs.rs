@@ -5,42 +5,44 @@ use chromiumoxide::{
 use std::fs::{self};
 use tokio::time;
 
-use crate::{funcs::sleep, log, types::TuError};
+use crate::{bot::utils::IS_FB, funcs::sleep, log, types::TuError};
 use chromiumoxide::cdp::browser_protocol::network::CookieParam;
 
 pub async fn find_click_btn(
     page: &Page,
-    selector: &str,
-    name: &str,
+    sel: (&str, &str),
     max: Option<usize>,
 ) -> Result<(), TuError> {
+    let (selector, name) = sel;
+    let mut ok = false;
     for _ in 0..max.unwrap_or_else(|| 5) {
         log!("Finding {name} button...");
-        match page.find_element(selector).await {
-            Ok(btn) => {
-                log!("Clicking {name} btn...");
-                btn.click().await?;
-                break;
-            }
-            Err(_) => {
-                time::sleep(time::Duration::from_millis(1000)).await;
-            }
-        };
+        if let Ok(btn) = page.find_element(selector).await {
+            log!("Clicking {name} btn...");
+            btn.click().await?;
+            ok = true;
+            break;
+        } else {
+            time::sleep(time::Duration::from_millis(1000)).await;
+        }
     }
-
+    if !ok{
+        return Err(format!("Could not find {name} btn!").into());
+    }
     Ok(())
 }
 
-pub async fn wait_for_popup_page(browser: &Browser) -> Result<Page, TuError> {
+pub async fn wait_for_popup_page(browser: &Browser, domain: &str) -> Result<Page, TuError> {
     log!("[wait_for_popup_page]");
     let mut popup_page = None;
     while popup_page.is_none() {
         for page in browser.pages().await? {
             if let Ok(Some(url)) = page.url().await {
-                println!("\n");
-                log!("{url}");
-                if url.contains("youtube.com") {
+               
+                if url.contains(domain) {
+                    log!("{url}");
                     popup_page.replace(page);
+                    break;
                 }
             }
         }
@@ -155,7 +157,7 @@ pub async fn start_task(browser: &Browser, page: &Page) -> Result<(), TuError> {
     page.evaluate_function(js).await?;
 
     for i in 0..5 {
-        if let Err(_err) = find_click_btn(&page, "a.earn_pages_button", "earn", None).await {
+        if let Err(_err) = find_click_btn(&page, ("a.earn_pages_button", "earn"), None).await {
             // Refresh page
             log!("[{i}] REFRESH_PAGE...");
             sleep(3000).await;
@@ -165,11 +167,18 @@ pub async fn start_task(browser: &Browser, page: &Page) -> Result<(), TuError> {
             break;
         }
     }
-
-    let popup_page = wait_for_popup_page(&browser).await?;
+    let domain = if IS_FB { "facebook.com" } else { "youtube.com" };
+    let popup_page = wait_for_popup_page(&browser, domain).await?;
     popup_page.wait_for_navigation().await?;
-
-    find_click_btn(&popup_page, ".ytLikeButtonViewModelHost", "yt-like", None).await?;
+    let sel = if IS_FB {
+        (r#"div[aria-label="Follow"]"#, "fb-follow")
+    } else {
+        (".ytLikeButtonViewModelHost", "yt-like")
+    };
+    popup_page.bring_to_front().await?;
+    if let Err(err) = find_click_btn(&popup_page, sel, None).await{
+        log!("{err:?}");
+    };
 
     // wait a bit the close popup page
     sleep(1500).await;
@@ -178,7 +187,7 @@ pub async fn start_task(browser: &Browser, page: &Page) -> Result<(), TuError> {
 
     sleep(1500).await;
     // click confirm btn
-    find_click_btn(&page, ".cursor.pulse-checkBox", "confirm", None).await?;
+    find_click_btn(&page, (".cursor.pulse-checkBox", "confirm"), None).await?;
 
     Ok(())
 }
