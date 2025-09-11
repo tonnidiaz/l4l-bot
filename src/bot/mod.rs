@@ -68,7 +68,7 @@ Chrome/115.0.0.0 Safari/537.36";
     }
     // go to like4like page
     let url = if IS_FB {
-        "https://www.like4like.org/user/earn-facebook.php"
+        "https://www.like4like.org/user/earn-facebook-subscribes.php"
     } else {
         "https://www.like4like.org/user/earn-youtube.php"
     };
