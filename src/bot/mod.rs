@@ -215,6 +215,7 @@ impl Bot {
                 };
                 return Err(err);
             };
+            sleep(1000).await;
             Ok(())
         };
 

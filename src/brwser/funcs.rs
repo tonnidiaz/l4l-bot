@@ -11,7 +11,7 @@ static USER_AGENTS: &[&str] = &[
     "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile Safari/604.1",
 ];
 
-static LOCALES: &[&str] = &["en-US", "en-GB", "de-DE", "fr-FR", "ja-JP"];
+static LOCALES: &[&str] = &["en-US", "en-GB"];
 static TIMEZONES: &[&str] = &[
     "America/New_York",
     "Europe/London",
