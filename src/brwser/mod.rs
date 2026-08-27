@@ -1,5 +1,5 @@
 mod funcs;
-pub use funcs::{*};
+pub use funcs::*;
 
 use std::sync::{
     Arc, Mutex,
@@ -7,8 +7,10 @@ use std::sync::{
 };
 
 use once_cell::sync::OnceCell;
-use playwright_rs::{Browser, LaunchOptions, Playwright, Viewport, install_browsers};
-use turs::{Res, log};
+use playwright_rs::{
+    Browser, ClickOptions, LaunchOptions, Page, Playwright, Viewport, install_browsers,
+};
+use turs::{Res, futures, log, sleep};
 
 use crate::{brwser::funcs::gen_fingerprint, consts::Const};
 
@@ -118,6 +120,7 @@ impl BrMan {
 
         let page = context.new_page().await.expect("Failed to create new page");
         add_listeners(&page, tag).await?;
+        close_popups(tag, page.clone()).await?;
 
         Ok((context, page))
     }
@@ -149,5 +152,45 @@ async fn add_listeners(page: &playwright_rs::Page, tag: &str) -> Res<()> {
         }
     })
     .await?;
+    Ok(())
+}
+
+async fn close_popups(tag: &str, page: Page) -> Res<()> {
+    tokio::spawn({
+        let tag = tag.to_string();
+        let page = page.clone();
+        async move {
+            println!("");
+            log!("{tag} [close_popups] started!");
+            println!("");
+
+            let mut tasks = vec![];
+            let selectors = vec!["#happy-hour-banner button.close-banner"];
+            for sel in selectors {
+                tasks.push(tokio::spawn({
+                    let page = page.clone();
+                    async move {
+                        let loc = page.locator(sel);
+                        while !page.is_closed() {
+                            if loc.count().await.unwrap_or(0) > 0 {
+                                let _ = loc
+                                    .first()
+                                    .click(ClickOptions::builder().force(true).build())
+                                    .await;
+                            }
+
+                            sleep(1000).await;
+                        }
+                    }
+                }));
+            }
+            futures::future::join_all(tasks).await;
+            println!("");
+
+            log!("{tag} [close_popups] finished!");
+            println!("");
+        }
+    });
+
     Ok(())
 }
