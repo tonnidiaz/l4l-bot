@@ -1,6 +1,6 @@
 mod funcs;
 
-use playwright_rs::{BrowserContext, ClickOptions, Locator, Page, WaitForOptions};
+use playwright_rs::{BrowserContext, ClickOptions, GotoOptions, Locator, Page, WaitForOptions, WaitUntil};
 use turs::{Res, elog, log, sleep};
 
 use crate::{
@@ -65,48 +65,60 @@ impl Bot {
         let page = &self.page;
         log!("{tag} url: {}", page.url());
         let sel = "a.earn_pages_button";
-        let _ = page.locator(sel).scroll_into_view_if_needed().await;
 
         if let Err(err) = click_el(page, sel, Some(30_000.0), Some(true)).await {
+            elog!("{tag} Error clicking l4l action btn.\n{err:?}");
             if let Ok(cnt) = page.locator(sel).count().await {
                 log!("{tag} COUNT: {cnt}");
             };
-            return Err(err);
+            page.reload(GotoOptions::new().wait_until(WaitUntil::NetworkIdle)).await?;
+            return Ok(());
+            // return Err(err);
         };
 
         log!("{tag} [wait] popup page...");
         let popup_page = wait_for_popup_page(&self.ctx, "youtube.com").await?;
-        log!("{tag} [popup_url] {}", popup_page.url());
-        wait_nav(&popup_page, tag).await?;
-        log!("{tag} bring to front...");
-        popup_page.bring_to_front().await?;
-        log!("{tag} [find] like-btn...");
+        let popup_url = popup_page.url();
+        log!("{tag} [popup_url] {}", popup_url);
+        if !popup_url.contains("post") {
+            let _ = wait_nav(&popup_page, tag).await;
+            log!("{tag} bring to front...");
+            let _ = popup_page.bring_to_front().await;
+            log!("{tag} [find] like-btn...");
 
-        let like_btn_loc = popup_page.locator("like-button-view-model");
-        let mut like_btn_cnt = 0;
-        while like_btn_cnt <= 0 {
-            sleep(500).await;
-            like_btn_cnt = like_btn_loc.count().await.unwrap_or(0);
+            let like_btn_loc = popup_page.locator("like-button-view-model");
+            let mut like_btn_cnt = 0;
+            let mut i = 0;
+            while like_btn_cnt <= 0 && i < 5 {
+                i += 1;
+                sleep(1000).await;
+                like_btn_cnt = like_btn_loc.count().await.unwrap_or(0);
+            }
+
+            let like_btn_i = if like_btn_cnt > 1 { 1 } else { 0 };
+
+            log!("{tag} [like_btn_i] {like_btn_i}");
+
+            if let Err(err) = like_btn_loc
+                .nth(like_btn_i)
+                .click(ClickOptions::builder().force(true).build())
+                .await
+            {
+                elog!("Failed to click like btn: {err:?}");
+                // sleep(200_000_000).await;
+            };
+
+            sleep(1000).await;
+        } else {
+            log!("{tag} Is a post!!");
         }
 
-        let like_btn_i = if like_btn_cnt > 1 { 1 } else { 0 };
-
-        log!("{tag} [like_btn_i] {like_btn_i}");
-
-        if let Err(err) = like_btn_loc.nth(like_btn_i).click(ClickOptions::builder().force(true).build()).await {
-            elog!("Failed to click like btn: {err:?}");
-            sleep(200_000_000).await;
-        };
-
-        sleep(1000).await;
         log!("Closing popup page...");
         popup_page.close().await?;
 
         sleep(1000).await;
-        let _ = page.bring_to_front().await;
         log!("{tag} [click] confirm btn...");
         let sel = ".cursor.pulse-checkBox";
-        let _ = page.locator(sel).scroll_into_view_if_needed().await;
         if let Err(err) = click_el(page, sel, Some(30_000.0), Some(true)).await {
             if let Ok(cnt) = page.locator(sel).count().await {
                 log!("{tag} COUNT: {cnt}");
