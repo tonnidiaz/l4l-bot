@@ -1,0 +1,29 @@
+[
+  {
+    "name": "PHPSESSID",
+    "value": "sti2f3er6or1pu6jb9q177v6jt",
+    "domain": ".like4like.org",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true
+  },
+  {
+    "name": "_ga_DVWFX221E1",
+    "value": "GS2.1.s1787836291$o10$g1$t1787836292$j59$l0$h0",
+    "domain": ".like4like.org",
+    "path": "/",
+    "expires": 1822396293,
+    "httpOnly": false,
+    "secure": false
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.1.1487050275.1787724580",
+    "domain": ".like4like.org",
+    "path": "/",
+    "expires": 1822396293,
+    "httpOnly": false,
+    "secure": false
+  }
+]
