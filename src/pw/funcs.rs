@@ -60,3 +60,19 @@ pub async fn click_el(page: &Page, sel: &str, timeout: Option<f64>, force: Optio
         .await?;
     Ok(())
 }
+
+pub async fn find_any(page: &Page, selectors: &[&str], timeout: Option<i64>) -> Res<(Locator, usize)> {
+    let start = turs::now();
+
+    while turs::now() - start < timeout.unwrap_or(30_000) {
+        for (i, sel) in selectors.iter().enumerate() {
+            let loc = page.locator(*sel);
+            if loc.count().await.unwrap_or(0) > 0 {
+                return Ok((loc, i));
+            }
+        }
+        sleep(250).await;
+    }
+
+    Err("No matching selector found".into())
+}
